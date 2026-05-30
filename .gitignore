@@ -42,3 +42,9 @@ next-env.d.ts
 
 # 대화 결과물 및 로컬 문서
 docs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
