@@ -7,6 +7,11 @@ export async function GET(
 ) {
   const { id } = await params;
 
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!uuidRegex.test(id)) {
+    return NextResponse.json({ success: false, error: '유효하지 않은 경매 ID입니다.' }, { status: 400 });
+  }
+
   const [auction] = await sql`
     SELECT a.*, u.name AS seller_name
     FROM auctions a

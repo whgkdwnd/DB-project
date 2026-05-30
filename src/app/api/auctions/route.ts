@@ -34,10 +34,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: '시작가는 0보다 큰 숫자여야 합니다.' }, { status: 400 });
   }
 
-  const [auction] = await sql`
-    INSERT INTO auctions (seller_id, title, description, starting_price, current_price, ends_at)
-    VALUES (${user.userId}, ${title}, ${description ?? null}, ${starting_price}, ${starting_price}, ${ends_at})
-    RETURNING *
-  `;
-  return NextResponse.json({ success: true, data: auction }, { status: 201 });
+  const endsAt = new Date(ends_at);
+  if (isNaN(endsAt.getTime()) || endsAt <= new Date()) {
+    return NextResponse.json({ success: false, error: '마감 시간은 현재보다 미래여야 합니다.' }, { status: 400 });
+  }
+
+  try {
+    const [auction] = await sql`
+      INSERT INTO auctions (seller_id, title, description, starting_price, current_price, ends_at)
+      VALUES (${user.userId}, ${title}, ${description ?? null}, ${starting_price}, ${starting_price}, ${ends_at})
+      RETURNING *
+    `;
+    return NextResponse.json({ success: true, data: auction }, { status: 201 });
+  } catch {
+    return NextResponse.json({ success: false, error: '경매 생성에 실패했습니다.' }, { status: 500 });
+  }
 }
