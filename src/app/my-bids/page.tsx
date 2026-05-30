@@ -1,4 +1,7 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { getCurrentUser } from '@/lib/auth';
+import sql from '@/lib/db';
 
 interface BidRecord {
   id: string;
@@ -10,15 +13,18 @@ interface BidRecord {
   current_price: number;
 }
 
-async function getMyBids(): Promise<BidRecord[]> {
-  const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-  const res = await fetch(`${base}/api/my-bids`, { cache: 'no-store' });
-  const json = await res.json();
-  return json.success ? json.data : [];
-}
-
 export default async function MyBidsPage() {
-  const bids = await getMyBids();
+  const user = await getCurrentUser();
+  if (!user) redirect('/auth/login');
+
+  const bids = await sql<BidRecord[]>`
+    SELECT b.id, b.amount, b.created_at,
+           a.id AS auction_id, a.title, a.status, a.current_price
+    FROM bids b
+    JOIN auctions a ON b.auction_id = a.id
+    WHERE b.bidder_id = ${user.userId}
+    ORDER BY b.created_at DESC
+  `;
 
   return (
     <div>
