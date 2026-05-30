@@ -42,7 +42,7 @@ export default function BidForm({ auctionId, currentPrice }: { auctionId: string
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           placeholder="입찰가 입력"
-          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm"
+          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
         />
         <button
           onClick={handleBid}

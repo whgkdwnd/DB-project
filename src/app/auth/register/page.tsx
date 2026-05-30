@@ -24,11 +24,11 @@ export default function RegisterPage() {
     <div className="max-w-sm mx-auto mt-20">
       <h1 className="text-2xl font-bold mb-6 text-center">회원가입</h1>
       <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-        <input placeholder="이름" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+        <input placeholder="이름" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
           value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-        <input type="email" placeholder="이메일" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+        <input type="email" placeholder="이메일" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
           value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-        <input type="password" placeholder="비밀번호" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+        <input type="password" placeholder="비밀번호" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
           value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
