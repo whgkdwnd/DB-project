@@ -1,11 +1,20 @@
 import Link from 'next/link';
 import { Auction } from '@/types';
+import sql from '@/lib/db';
 
 async function getAuctions(): Promise<Auction[]> {
-  const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-  const res = await fetch(`${base}/api/auctions`, { cache: 'no-store' });
-  const json = await res.json();
-  return json.success ? json.data : [];
+  return sql<Auction[]>`
+    SELECT a.id, a.title, a.description, a.starting_price, a.current_price,
+           a.status, a.ends_at, a.created_at,
+           u.name AS seller_name,
+           COUNT(b.id)::int AS bid_count
+    FROM auctions a
+    JOIN users u ON a.seller_id = u.id
+    LEFT JOIN bids b ON b.auction_id = a.id
+    WHERE a.status = 'active'
+    GROUP BY a.id, u.name
+    ORDER BY a.ends_at ASC
+  `;
 }
 
 function timeLeft(endsAt: string): string {

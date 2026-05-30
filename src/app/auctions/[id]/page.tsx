@@ -1,12 +1,26 @@
 import { notFound } from 'next/navigation';
 import { Auction, Bid } from '@/types';
 import BidForm from './BidForm';
+import sql from '@/lib/db';
 
 async function getAuction(id: string): Promise<{ auction: Auction; bids: Bid[] } | null> {
-  const base = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-  const res = await fetch(`${base}/api/auctions/${id}`, { cache: 'no-store' });
-  const json = await res.json();
-  return json.success ? json.data : null;
+  const [auction] = await sql<Auction[]>`
+    SELECT a.*, u.name AS seller_name
+    FROM auctions a
+    JOIN users u ON a.seller_id = u.id
+    WHERE a.id = ${id}
+  `;
+  if (!auction) return null;
+
+  const bids = await sql<Bid[]>`
+    SELECT b.id, b.amount, b.created_at, u.name AS bidder_name,
+           RANK() OVER (ORDER BY b.amount DESC)::int AS rank
+    FROM bids b
+    JOIN users u ON b.bidder_id = u.id
+    WHERE b.auction_id = ${id}
+    ORDER BY b.amount DESC
+  `;
+  return { auction, bids };
 }
 
 export default async function AuctionDetailPage({ params }: { params: Promise<{ id: string }> }) {
