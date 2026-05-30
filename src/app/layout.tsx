@@ -1,9 +1,13 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Montserrat } from 'next/font/google';
 import './globals.css';
 import Navbar from './components/Navbar';
 
-const inter = Inter({ subsets: ['latin'] });
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  weight: ['300', '400', '500', '700'],
+});
 
 export const metadata: Metadata = {
   title: '경매마켓',
@@ -13,9 +17,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
-      <body className={`${inter.className} bg-gray-50 min-h-screen`}>
+      <body className={montserrat.className} style={{ background: 'var(--surface-soft)', minHeight: '100vh' }}>
         <Navbar />
-        <main className="max-w-5xl mx-auto px-4 py-8">{children}</main>
+        <main style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 24px' }}>
+          {children}
+        </main>
       </body>
     </html>
   );

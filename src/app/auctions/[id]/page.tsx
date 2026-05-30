@@ -17,25 +17,54 @@ export default async function AuctionDetailPage({ params }: { params: Promise<{ 
   const { auction, bids } = data;
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h1 className="text-2xl font-bold">{auction.title}</h1>
-        <p className="text-sm text-gray-500 mt-1">판매자: {auction.seller_name}</p>
-        {auction.description && <p className="mt-3 text-gray-700">{auction.description}</p>}
+    <div style={{ maxWidth: 720, margin: '0 auto' }}>
+      {/* 메인 카드 */}
+      <div className="card-product" style={{ padding: 40, marginBottom: 16 }}>
+        {/* 상태 배지 */}
+        <div style={{ marginBottom: 20 }}>
+          <span className="badge" style={{
+            background: auction.status === 'active' ? '#e8f5e9' : 'var(--surface-soft)',
+            color: auction.status === 'active' ? 'var(--success)' : 'var(--stone)',
+          }}>
+            {auction.status === 'active' ? '● 진행 중' : '종료'}
+          </span>
+        </div>
 
-        <div className="mt-4 flex gap-6">
-          <div>
-            <p className="text-xs text-gray-400">시작가</p>
-            <p className="font-semibold">{auction.starting_price.toLocaleString()}원</p>
+        <h1 style={{ fontSize: 28, fontWeight: 500, color: 'var(--ink-deep)', margin: '0 0 8px', lineHeight: 1.21 }}>
+          {auction.title}
+        </h1>
+        <p style={{ fontSize: 14, color: 'var(--steel)', margin: '0 0 24px' }}>
+          판매자 · {auction.seller_name}
+        </p>
+
+        {auction.description && (
+          <p style={{ fontSize: 16, color: 'var(--charcoal)', margin: '0 0 28px', lineHeight: 1.6 }}>
+            {auction.description}
+          </p>
+        )}
+
+        {/* 가격 정보 */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr',
+          gap: 16, padding: '24px 0',
+          borderTop: '1px solid var(--hairline-soft)',
+          borderBottom: auction.status === 'active' ? '1px solid var(--hairline-soft)' : 'none',
+          marginBottom: auction.status === 'active' ? 28 : 0,
+        }}>
+          <div style={{
+            background: 'var(--surface-soft)', borderRadius: 16, padding: '16px 20px',
+          }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--stone)', margin: '0 0 6px', letterSpacing: 0.5 }}>시작가</p>
+            <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--charcoal)', margin: 0 }}>
+              {auction.starting_price.toLocaleString()}원
+            </p>
           </div>
-          <div>
-            <p className="text-xs text-gray-400">현재가</p>
-            <p className="text-xl font-bold text-blue-600">{auction.current_price.toLocaleString()}원</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-400">상태</p>
-            <p className={`font-semibold ${auction.status === 'active' ? 'text-green-600' : 'text-gray-400'}`}>
-              {auction.status === 'active' ? '진행 중' : '종료'}
+          <div style={{
+            background: 'var(--primary)', borderRadius: 16, padding: '16px 20px',
+          }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.7)', margin: '0 0 6px', letterSpacing: 0.5 }}>현재가</p>
+            <p style={{ fontSize: 24, fontWeight: 700, color: '#fff', margin: 0, letterSpacing: '-0.5px' }}>
+              {auction.current_price.toLocaleString()}원
             </p>
           </div>
         </div>
@@ -45,18 +74,38 @@ export default async function AuctionDetailPage({ params }: { params: Promise<{ 
         )}
       </div>
 
-      <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-3">입찰 내역 ({bids.length}건)</h2>
+      {/* 입찰 내역 */}
+      <div className="card-product" style={{ padding: 32 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--ink-deep)', margin: '0 0 20px' }}>
+          입찰 내역 <span style={{ color: 'var(--steel)', fontWeight: 400 }}>({bids.length}건)</span>
+        </h2>
         {bids.length === 0 ? (
-          <p className="text-gray-400 text-sm">아직 입찰이 없습니다.</p>
+          <p style={{ fontSize: 14, color: 'var(--stone)', textAlign: 'center', padding: '32px 0', margin: 0 }}>
+            아직 입찰이 없습니다
+          </p>
         ) : (
-          <div className="space-y-2">
-            {bids.map((b) => (
-              <div key={b.id} className="bg-white border border-gray-200 rounded-lg px-4 py-3 flex justify-between">
-                <span className="text-sm text-gray-600">
-                  {b.rank === 1 ? '🥇 ' : ''}{b.bidder_name}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {bids.map((b, i) => (
+              <div key={b.id} style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: '14px 20px', borderRadius: 16,
+                background: i === 0 ? 'var(--surface-soft)' : 'transparent',
+                border: i === 0 ? 'none' : '1px solid var(--hairline-soft)',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  {i === 0 && (
+                    <span style={{
+                      fontSize: 11, fontWeight: 700, color: '#fff',
+                      background: 'var(--primary)', padding: '3px 10px', borderRadius: 100,
+                    }}>1위</span>
+                  )}
+                  <span style={{ fontSize: 14, color: 'var(--charcoal)', fontWeight: i === 0 ? 700 : 400 }}>
+                    {b.bidder_name}
+                  </span>
+                </div>
+                <span style={{ fontSize: 16, fontWeight: 700, color: i === 0 ? 'var(--primary)' : 'var(--ink)' }}>
+                  {b.amount.toLocaleString()}원
                 </span>
-                <span className="font-semibold">{b.amount.toLocaleString()}원</span>
               </div>
             ))}
           </div>

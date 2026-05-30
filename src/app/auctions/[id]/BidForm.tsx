@@ -31,30 +31,36 @@ export default function BidForm({ auctionId, currentPrice }: { auctionId: string
     }
   }
 
+  const success = message === '입찰 성공!';
+
   return (
-    <div className="mt-6 p-4 bg-blue-50 rounded-xl">
-      <p className="text-sm text-gray-600 mb-2">
-        현재가보다 높은 금액을 입력하세요 (현재: {currentPrice.toLocaleString()}원)
+    <div>
+      <p style={{ fontSize: 14, color: 'var(--steel)', marginBottom: 12 }}>
+        현재가 <strong style={{ color: 'var(--ink-deep)' }}>{currentPrice.toLocaleString()}원</strong> 보다 높은 금액을 입력하세요
       </p>
-      <div className="flex gap-2">
+      <div style={{ display: 'flex', gap: 10 }}>
         <input
           type="number"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          placeholder="입찰가 입력"
-          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
+          placeholder="입찰가 입력 (원)"
+          className="meta-input"
+          style={{ flex: 1 }}
+          onKeyDown={(e) => e.key === 'Enter' && handleBid()}
         />
-        <button
-          onClick={handleBid}
-          disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50">
-          {loading ? '처리 중...' : '입찰하기'}
+        <button onClick={handleBid} disabled={loading} className="btn-buy">
+          {loading ? '처리 중…' : '입찰하기'}
         </button>
       </div>
       {message && (
-        <p className={`text-sm mt-2 ${message === '입찰 성공!' ? 'text-green-600' : 'text-red-500'}`}>
+        <div style={{
+          marginTop: 12, padding: '10px 16px', borderRadius: 8,
+          background: success ? '#e8f5e9' : '#fdecea',
+          color: success ? 'var(--success)' : 'var(--critical)',
+          fontSize: 14, fontWeight: 700,
+        }}>
           {message}
-        </p>
+        </div>
       )}
     </div>
   );

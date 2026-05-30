@@ -27,31 +27,64 @@ export default async function MyBidsPage() {
   `;
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">내 입찰 이력</h1>
+    <div style={{ maxWidth: 720, margin: '0 auto' }}>
+      <div style={{ marginBottom: 32 }}>
+        <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>
+          MY ACTIVITY
+        </p>
+        <h1 style={{ fontSize: 36, fontWeight: 500, color: 'var(--ink-deep)', margin: 0, lineHeight: 1.28 }}>
+          내 입찰 이력
+        </h1>
+      </div>
+
       {bids.length === 0 ? (
-        <p className="text-gray-400 text-center py-20">입찰 이력이 없습니다.</p>
+        <div className="card-product" style={{ padding: '80px 40px', textAlign: 'center' }}>
+          <p style={{ fontSize: 18, color: 'var(--steel)', margin: 0 }}>입찰 이력이 없습니다</p>
+          <p style={{ fontSize: 14, color: 'var(--stone)', marginTop: 8 }}>경매에 참여해보세요</p>
+        </div>
       ) : (
-        <div className="space-y-3">
-          {bids.map((b) => (
-            <Link key={b.id} href={`/auctions/${b.auction_id}`}
-              className="block bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow">
-              <div className="flex justify-between items-center">
-                <div>
-                  <p className="font-semibold">{b.title}</p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {new Date(b.created_at).toLocaleString('ko-KR')}
-                  </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {bids.map((b) => {
+            const isLeading = b.amount >= b.current_price;
+            return (
+              <Link key={b.id} href={`/auctions/${b.auction_id}`} style={{ textDecoration: 'none' }}>
+                <div className="card-product" style={{
+                  padding: '20px 28px', cursor: 'pointer',
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16,
+                }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{
+                      fontSize: 16, fontWeight: 700, color: 'var(--ink-deep)', margin: '0 0 6px',
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      {b.title}
+                    </p>
+                    <p style={{ fontSize: 12, color: 'var(--stone)', margin: 0 }}>
+                      {new Date(b.created_at).toLocaleString('ko-KR')}
+                    </p>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--primary)', margin: '0 0 6px' }}>
+                      {b.amount.toLocaleString()}원
+                    </p>
+                    <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+                      <span className="badge" style={{
+                        background: b.status === 'active' ? '#e8f5e9' : 'var(--surface-soft)',
+                        color: b.status === 'active' ? 'var(--success)' : 'var(--stone)',
+                      }}>
+                        {b.status === 'active' ? '진행 중' : '종료'}
+                      </span>
+                      {isLeading && b.status === 'active' && (
+                        <span className="badge" style={{ background: 'var(--primary)', color: '#fff' }}>
+                          최고가
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-blue-600 font-bold">{b.amount.toLocaleString()}원</p>
-                  <p className={`text-xs ${b.status === 'active' ? 'text-green-500' : 'text-gray-400'}`}>
-                    {b.status === 'active' ? '진행 중' : '종료'}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

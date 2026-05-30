@@ -21,23 +21,42 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="max-w-sm mx-auto mt-20">
-      <h1 className="text-2xl font-bold mb-6 text-center">회원가입</h1>
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-        <input placeholder="이름" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
-          value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-        <input type="email" placeholder="이메일" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
-          value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-        <input type="password" placeholder="비밀번호" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
-          value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
-          가입하기
-        </button>
-        <p className="text-center text-sm text-gray-500">
-          이미 계정이 있으신가요? <Link href="/auth/login" className="text-blue-600">로그인</Link>
-        </p>
-      </form>
+    <div style={{ maxWidth: 400, margin: '60px auto 0' }}>
+      <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <h1 style={{ fontSize: 28, fontWeight: 500, color: 'var(--ink-deep)', margin: '0 0 8px' }}>회원가입</h1>
+        <p style={{ fontSize: 14, color: 'var(--steel)', margin: 0 }}>계정을 만들고 경매에 참여하세요</p>
+      </div>
+      <div className="card-product" style={{ padding: 36 }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div>
+            <label style={{ display: 'block', fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>이름</label>
+            <input placeholder="홍길동" className="meta-input"
+              value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>이메일</label>
+            <input type="email" placeholder="name@example.com" className="meta-input"
+              value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>비밀번호</label>
+            <input type="password" placeholder="비밀번호 입력" className="meta-input"
+              value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+          </div>
+          {error && (
+            <div style={{ padding: '10px 16px', background: '#fdecea', borderRadius: 8, fontSize: 14, color: 'var(--critical)', fontWeight: 700 }}>
+              {error}
+            </div>
+          )}
+          <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: 8 }}>
+            가입하기
+          </button>
+          <p style={{ textAlign: 'center', fontSize: 14, color: 'var(--steel)', margin: 0 }}>
+            이미 계정이 있으신가요?{' '}
+            <Link href="/auth/login" style={{ color: 'var(--primary)', fontWeight: 700, textDecoration: 'none' }}>로그인</Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }

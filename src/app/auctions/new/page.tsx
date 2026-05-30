@@ -20,34 +20,50 @@ export default function NewAuctionPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold mb-6">경매 등록</h1>
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">상품명</label>
-          <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
-            value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">설명</label>
-          <textarea className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
-            value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">시작가 (원)</label>
-          <input type="number" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
-            value={form.starting_price} onChange={(e) => setForm({ ...form, starting_price: e.target.value })} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">마감 일시</label>
-          <input type="datetime-local" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900"
-            value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} required />
-        </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
-          등록하기
-        </button>
-      </form>
+    <div style={{ maxWidth: 560, margin: '0 auto' }}>
+      <div style={{ marginBottom: 32 }}>
+        <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary)', letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>
+          NEW LISTING
+        </p>
+        <h1 style={{ fontSize: 36, fontWeight: 500, color: 'var(--ink-deep)', margin: 0, lineHeight: 1.28 }}>경매 등록</h1>
+      </div>
+
+      <div className="card-product" style={{ padding: 40 }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div>
+            <label style={{ display: 'block', fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>상품명</label>
+            <input className="meta-input" placeholder="예: 맥북 프로 M3, 에어팟 프로 2세대"
+              value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
+              설명 <span style={{ fontWeight: 400, color: 'var(--stone)' }}>(선택)</span>
+            </label>
+            <textarea className="meta-textarea" placeholder="상품 상태, 구성품 등을 자유롭게 작성하세요"
+              value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+            <div>
+              <label style={{ display: 'block', fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>시작가 (원)</label>
+              <input type="number" className="meta-input" placeholder="10000"
+                value={form.starting_price} onChange={(e) => setForm({ ...form, starting_price: e.target.value })} required />
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>마감 일시</label>
+              <input type="datetime-local" className="meta-input"
+                value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} required />
+            </div>
+          </div>
+          {error && (
+            <div style={{ padding: '10px 16px', background: '#fdecea', borderRadius: 8, fontSize: 14, color: 'var(--critical)', fontWeight: 700 }}>
+              {error}
+            </div>
+          )}
+          <button type="submit" className="btn-buy" style={{ width: '100%', marginTop: 8 }}>
+            경매 등록하기
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
