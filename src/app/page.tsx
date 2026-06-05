@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { Auction } from '@/types';
 import sql from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 async function getAuctions(): Promise<Auction[]> {
   return sql<Auction[]>`
     SELECT a.id, a.title, a.description, a.starting_price, a.current_price,

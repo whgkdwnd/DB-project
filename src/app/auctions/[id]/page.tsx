@@ -3,6 +3,8 @@ import { Auction, Bid } from '@/types';
 import BidForm from './BidForm';
 import sql from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 async function getAuction(id: string): Promise<{ auction: Auction; bids: Bid[] } | null> {
   const [auction] = await sql<Auction[]>`
     SELECT a.*, u.name AS seller_name
