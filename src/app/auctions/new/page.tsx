@@ -7,12 +7,18 @@ export default function NewAuctionPage() {
   const [form, setForm] = useState({ title: '', description: '', starting_price: '', ends_at: '' });
   const [error, setError] = useState('');
 
+  const minDateTimeKST = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 16);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const res = await fetch('/api/auctions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, starting_price: parseInt(form.starting_price, 10) }),
+      body: JSON.stringify({
+        ...form,
+        ends_at: form.ends_at ? form.ends_at + ':00+09:00' : '',
+        starting_price: parseInt(form.starting_price, 10),
+      }),
     });
     const json = await res.json();
     if (json.success) router.push(`/auctions/${json.data.id}`);
@@ -51,6 +57,7 @@ export default function NewAuctionPage() {
             <div>
               <label style={{ display: 'block', fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>마감 일시</label>
               <input type="datetime-local" className="meta-input"
+                min={minDateTimeKST}
                 value={form.ends_at} onChange={(e) => setForm({ ...form, ends_at: e.target.value })} required />
             </div>
           </div>
