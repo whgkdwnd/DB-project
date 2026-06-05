@@ -39,10 +39,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: '마감 시간은 현재보다 미래여야 합니다.' }, { status: 400 });
   }
 
+  const idempotencyKey = req.headers.get('Idempotency-Key');
+
   try {
+    // 동일한 키로 이미 생성된 경매가 있으면 그대로 반환
+    if (idempotencyKey) {
+      const [existing] = await sql`
+        SELECT * FROM auctions WHERE idempotency_key = ${idempotencyKey}
+      `;
+      if (existing) return NextResponse.json({ success: true, data: existing });
+    }
+
     const [auction] = await sql`
-      INSERT INTO auctions (seller_id, title, description, starting_price, current_price, ends_at)
-      VALUES (${user.userId}, ${title}, ${description ?? null}, ${starting_price}, ${starting_price}, ${ends_at})
+      INSERT INTO auctions (seller_id, title, description, starting_price, current_price, ends_at, idempotency_key)
+      VALUES (${user.userId}, ${title}, ${description ?? null}, ${starting_price}, ${starting_price}, ${ends_at}, ${idempotencyKey ?? null})
       RETURNING *
     `;
     return NextResponse.json({ success: true, data: auction }, { status: 201 });

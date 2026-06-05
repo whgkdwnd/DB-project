@@ -6,23 +6,35 @@ export default function NewAuctionPage() {
   const router = useRouter();
   const [form, setForm] = useState({ title: '', description: '', starting_price: '', ends_at: '' });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [idempotencyKey] = useState(() => crypto.randomUUID());
 
   const minDateTimeKST = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 16);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const res = await fetch('/api/auctions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...form,
-        ends_at: form.ends_at ? form.ends_at + ':00+09:00' : '',
-        starting_price: parseInt(form.starting_price, 10),
-      }),
-    });
-    const json = await res.json();
-    if (json.success) router.push(`/auctions/${json.data.id}`);
-    else setError(json.error);
+    if (loading) return;
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/auctions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': idempotencyKey,
+        },
+        body: JSON.stringify({
+          ...form,
+          ends_at: form.ends_at ? form.ends_at + ':00+09:00' : '',
+          starting_price: parseInt(form.starting_price, 10),
+        }),
+      });
+      const json = await res.json();
+      if (json.success) router.push(`/auctions/${json.data.id}`);
+      else setError(json.error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -66,8 +78,9 @@ export default function NewAuctionPage() {
               {error}
             </div>
           )}
-          <button type="submit" className="btn-buy" style={{ width: '100%', marginTop: 8 }}>
-            경매 등록하기
+          <button type="submit" className="btn-buy" disabled={loading}
+            style={{ width: '100%', marginTop: 8, opacity: loading ? 0.6 : 1, cursor: loading ? 'not-allowed' : 'pointer' }}>
+            {loading ? '등록 중...' : '경매 등록하기'}
           </button>
         </form>
       </div>
