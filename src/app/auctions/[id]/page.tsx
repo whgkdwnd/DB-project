@@ -12,6 +12,12 @@ async function getAuction(id: string): Promise<{ auction: Auction; bids: Bid[] }
   `;
   if (!auction) return null;
 
+  // ends_at이 지났는데 status가 여전히 active이면 ended로 업데이트
+  if (auction.status === 'active' && new Date(auction.ends_at) <= new Date()) {
+    await sql`UPDATE auctions SET status = 'ended' WHERE id = ${id} AND status = 'active'`;
+    auction.status = 'ended';
+  }
+
   const bids = await sql<Bid[]>`
     SELECT b.id, b.amount, b.created_at, u.name AS bidder_name,
            RANK() OVER (ORDER BY b.amount DESC)::int AS rank

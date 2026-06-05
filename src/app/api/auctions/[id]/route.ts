@@ -23,6 +23,12 @@ export async function GET(
     return NextResponse.json({ success: false, error: '경매를 찾을 수 없습니다.' }, { status: 404 });
   }
 
+  // ends_at이 지났는데 status가 여전히 active이면 ended로 업데이트
+  if (auction.status === 'active' && new Date(auction.ends_at) <= new Date()) {
+    await sql`UPDATE auctions SET status = 'ended' WHERE id = ${id} AND status = 'active'`;
+    auction.status = 'ended';
+  }
+
   const bids = await sql`
     SELECT b.id, b.amount, b.created_at, u.name AS bidder_name,
            RANK() OVER (ORDER BY b.amount DESC)::int AS rank

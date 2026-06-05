@@ -19,7 +19,8 @@ export default async function MyBidsPage() {
 
   const bids = await sql<BidRecord[]>`
     SELECT b.id, b.amount, b.created_at,
-           a.id AS auction_id, a.title, a.status, a.current_price
+           a.id AS auction_id, a.title, a.current_price,
+           CASE WHEN a.status = 'active' AND a.ends_at <= now() THEN 'ended' ELSE a.status END AS status
     FROM bids b
     JOIN auctions a ON b.auction_id = a.id
     WHERE b.bidder_id = ${user.userId}

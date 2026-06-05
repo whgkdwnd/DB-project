@@ -11,7 +11,7 @@ export async function GET() {
     FROM auctions a
     JOIN users u ON a.seller_id = u.id
     LEFT JOIN bids b ON b.auction_id = a.id
-    WHERE a.status = 'active'
+    WHERE a.status = 'active' AND a.ends_at > now()
     GROUP BY a.id, u.name
     ORDER BY a.ends_at ASC
   `;
